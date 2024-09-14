@@ -1,7 +1,9 @@
+import React from 'react';
+
 function Footer() {
     return (
-      <footer>
-        <p>© 2023 Little Lemon. All rights reserved.</p>
+      <footer className="footer">
+        <p>© 2024 Little Lemon. All rights reserved.</p>
       </footer>
     );
   }
