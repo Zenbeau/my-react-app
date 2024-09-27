@@ -1,4 +1,7 @@
-import React from 'react';
+import {Routes, Route, Link, useNavigate} from 'react-router-dom';
+import React, { useState, useReducer, useEffect } from 'react';
+import BookingForm from './BookingForm';
+import ConfirmedBooking from './ConfirmedBooking';
 import image1 from './image1.jpg';
 import greekSaladImg from './greek-salad.jpg';
 import bruschettaImg from './bruschetta.svg';
@@ -7,9 +10,153 @@ import brothersImg from './Mario and Adrian b.jpg';
 import restaurantImg from './restaurant.jpg';
 import deliveryIconImg from './delivery-icon.png';
 
+const seededRandom = function (seed) {
+  var m = 2**35 - 31;
+  var a = 185852;
+  var s = seed % m;
+  return function () {
+      return (s = s * a % m) / m;
+  };
+}
+
+const fetchAPI = function(date) {
+  let result = [];
+  let random = seededRandom(date.getDate());
+
+  for(let i = 17; i <= 23; i++) {
+      if(random() < 0.5) {
+          result.push(i + ':00');
+      }
+      if(random() < 0.5) {
+          result.push(i + ':30');
+      }
+  }
+  return result;
+};
+
+const initializeTimes = () => {
+  const today = new Date();
+  return fetchAPI(today);
+};
+
+const updateTimes = (state, action) => {
+  switch (action.type) {
+    case 'UPDATE_TIMES':
+      return fetchAPI(new Date(action.date));
+    default:
+      return state;
+  }
+};
+
 function Main() {
+  const [availableTimes, dispatch] = useReducer(updateTimes, initializeTimes());
+
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
+  const [guests, setGuests] = useState(1);
+  const [occasion, setOccasion] = useState('');
+  const navigate = useNavigate();
+
+  const submitForm = (formData) => {
+    const submitAPI = function (formData) {
+      return true;
+    };
+
+    const success = submitAPI(formData);
+    if (success) {
+      navigate('/confirmed-booking');
+    } else {
+      console.log('Failed to submit the reservation.');
+    }
+  };
+
+  useEffect(() => {
+    if (date) {
+      dispatch({ type: 'UPDATE_TIMES', date });
+    }
+  }, [date]);
+
   return (
     <>
+      <Routes>
+        <Route path="/" element={<Homepage />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/menu" element={<Menu />} />
+        <Route path="/reservations" element={
+          <BookingPage
+            availableTimes={availableTimes}
+            dispatch={dispatch}
+            date={date} setDate={setDate}
+            time={time} setTime={setTime}
+            guests={guests} setGuests={setGuests}
+            occasion={occasion} setOccasion={setOccasion}
+            submitForm={submitForm}
+          />
+        } />
+        <Route path="/order" element={<Order />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/confirmed-booking" element={<ConfirmedBooking />} />
+      </Routes>
+
+      <CallToAction />
+      <Specials />
+      <CustomersSay />
+      <Chicago />
+    </>
+  );
+}
+
+export default Main;
+
+export { initializeTimes, updateTimes, fetchAPI};
+
+function BookingPage({ availableTimes, setDate, setTime, setGuests, setOccasion, submitForm }) {
+  return (
+    <div>
+      <BookingForm
+        availableTimes={availableTimes}
+        setDate={setDate}
+        setTime={setTime}
+        setGuests={setGuests}
+        setOccasion={setOccasion}
+        submitForm={submitForm}
+      />
+    </div>
+  );
+}
+
+function Homepage() {
+  return (
+    <h1>Welcome to the Little Lemon website</h1>
+  )
+}
+
+function About() {
+  return (
+    <h1>About Me section coming soon...</h1>
+  )
+}
+
+function Menu() {
+  return (
+    <h1>Menu section coming soon...</h1>
+  )
+}
+
+function Order() {
+  return (
+    <h1>Order section coming soon...</h1>
+  )
+}
+
+function Login() {
+  return (
+    <h1>Login section coming soon...</h1>
+  )
+}
+
+function CallToAction() {
+  return (
     <main className="main">
       <section className="headings">
         <h1 id="main-heading">Little Lemon</h1>
@@ -22,8 +169,13 @@ function Main() {
         <img src={image1} height={450} width={350} alt="serving-food" />
       </section>
     </main>
+  )
+}
 
-      <section className="specials-section">
+function Specials() {
+  return (
+    <section>
+    <section className="specials-section">
           <h1>Specials</h1>
           <button className="online-menu-button">Online Menu</button>
       </section>
@@ -74,8 +226,13 @@ function Main() {
         </div>
       </div>
     </section>
+    </section>
+  )
+}
 
-    <section className="headings3">
+function CustomersSay() {
+  return (
+  <section className="headings3">
         <h1 id="main-heading3">Testimonials</h1>
 
     <section className="testimonials-section">
@@ -140,7 +297,11 @@ function Main() {
         </section>
     </section>
     </section>
+  )
+}
 
+function Chicago() {
+  return (
     <section className="container1">
     <section className="headings2">
         <h1 id="main-heading2">Little Lemon</h1>
@@ -153,8 +314,6 @@ function Main() {
         <img src={restaurantImg} height={350} width={500} alt="restaurant outdoor" className="image-top" />
     </section>
     </section>
-    </>
-  );
+  )
 }
 
-export default Main;
