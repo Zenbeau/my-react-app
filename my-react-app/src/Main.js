@@ -127,7 +127,8 @@ function BookingPage({ availableTimes, setDate, setTime, setGuests, setOccasion,
 
 function Homepage() {
   return (
-    <h1>Welcome to the Little Lemon website</h1>
+    <h1></h1>
+    // <h1>Welcome to the Little Lemon website</h1>
   )
 }
 
@@ -162,7 +163,7 @@ function CallToAction() {
         <h1 id="main-heading">Little Lemon</h1>
         <h2 id="sub-heading">Chicago</h2>
         <p id="paragraph1">We are a family owned Mediterranean restaurant, focused on traditional recipes served with a modern twist.</p>
-        <button className="reservation-button">Reserve a Table</button>
+        <button className="reservation-button" aria-label="Reserve a Table" >Reserve a Table</button>
       </section>
 
       <section className="image-section">
@@ -177,7 +178,7 @@ function Specials() {
     <section>
     <section className="specials-section">
           <h1>Specials</h1>
-          <button className="online-menu-button">Online Menu</button>
+          <button className="online-menu-button" aria-label="Online Menu" >Online Menu</button>
       </section>
 
       <section className="cards-section">
